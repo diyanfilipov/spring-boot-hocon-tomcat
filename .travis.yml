@@ -1,10 +1,19 @@
 language: groovy
 jdk:
-  - oraclejdk8
+- oraclejdk8
 before_cache:
-  - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+- rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
 cache:
   directories:
-    - $HOME/.gradle/caches/
-    - $HOME/.gradle/wrapper/
+  - $HOME/.gradle/caches/
+  - $HOME/.gradle/wrapper/
+deploy:
+  provider: bintray
+  file:
+  user: diyanfilipov
+  key:
+    secure: Uh/TsG2hFPpegDzd3xdMNR27GAGpIvxNAOGrUOq83lUBXxbH9S3BYER4fEGx+tZUQHZ58GWeyUX6V7gnqSPjevNjvWPsaICR4oNMJvym40sjMENQr+eXXMmx5xD9uBx77lmk08cWIF22OXyoAjMhHqGuGB1PZk/WVCEJhJHIEdkoEtAvXK951kUQMkrs+8WuL5Fv/Sz3Wpd3JBvXqhiFIpw2/ta0OEO++N7zwsOiYt6gFmSR45cRqOlZagTI8zcrCf7ZuXA3afz+Fo0nB5snf/tQurjxYIYUPkwQXWmOMlZ/f1beumbutfVNkisVCDDAcoCJfKPlwuUOvh9a2aYvFyULH2p+xj9rfmv0L3Yhk7uahQ9iq9A02IoTiskdmRYtcm9Q+1rXZxhEowK2PfhC3LZVKjLU0KlZdjlIrEXKVUhozc5B72DXRafMo/UWCSOZL8th2V0HqN01ljYeJqlOmjpmaS2RbS9e2kcut090ppHTyfyvUKgQ53n3Veap3A/lHH7+pwZ3X009XdL8ofSg+0SREGvvbZgEb8y5blMTP7wE8z6g4sWhdrx0Ikn6mrR/ywnuKzDxu1NxHhC5crf8kOy8HGpSpNZfy7R+vQjN2IT2z5LRhW2+R4XTUESw76MfXWmUANXJoaWGhpzqoX+ILi5FsLZkCYr4OHvuSLKECIM=
+  dry-run: true
+  on: master
+
 script: ./gradlew check
