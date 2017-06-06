@@ -1,0 +1,189 @@
+import org.springframework.boot.gradle.run.BootRunTask
+
+buildscript {
+  ext {
+    springBootVersion = '1.5.3.RELEASE'
+  }
+
+  repositories {
+    mavenCentral()
+    maven { url "https://repo.spring.io/snapshot" }
+    maven { url "https://repo.spring.io/milestone" }
+  }
+
+  dependencies {
+    classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+  }
+}
+
+
+apply plugin: 'groovy'
+apply plugin: 'idea'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+group 'com.diyanfilipov'
+version '0.0.1'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+  mavenCentral()
+  maven { url "https://repo.spring.io/snapshot" }
+  maven { url "https://repo.spring.io/milestone" }
+}
+
+configurations {
+  providedRuntime
+  integrationTestCompile.extendsFrom testCompile
+  integrationTestRuntime.extendsFrom testRuntime
+}
+
+bootRepackage {
+  mainClass = 'com.diyanfilipov.main.MainApp'
+}
+
+sourceSets {
+  main.groovy.srcDirs = ['src/main/groovy']
+  main.resources.srcDirs = ['src/main/resources']
+
+  integrationTest {
+    compileClasspath += main.output
+    runtimeClasspath += main.output
+  }
+
+  integrationTestInMemory {
+    compileClasspath += main.output
+    runtimeClasspath += main.output
+  }
+
+  integrationTest.groovy.srcDirs = ['src/test/integration/groovy']
+  integrationTest.resources.srcDirs = ['src/test/integration/resources']
+
+}
+
+dependencies {
+
+  integrationTestCompile sourceSets.main.output
+  integrationTestCompile sourceSets.test.output
+  integrationTestCompile configurations.testCompile
+  integrationTestRuntime configurations.testRuntime
+
+//  compile("org.springframework.data:spring-data-rest-webmvc:2.6.3.RELEASE")
+
+  compile('org.springframework.boot:spring-boot-starter-data-jpa')
+  compile('org.springframework.boot:spring-boot-starter-jersey')
+  compile('org.springframework.boot:spring-boot-starter-security')
+  compile('org.springframework.boot:spring-boot-starter-validation')
+  compile('org.springframework.boot:spring-boot-starter-web')
+  compile('org.springframework.security.oauth:spring-security-oauth2')
+
+  compile('org.springframework.session:spring-session')
+  compile 'org.codehaus.groovy:groovy-all:2.4.3'
+  compile group: 'com.typesafe', name: 'config', version: '1.3.1'
+
+
+  // ################# DEPENDENCIES #############################
+  compile group: 'joda-time', name: 'joda-time', version: '2.9.9'
+  compile group: 'c3p0', name: 'c3p0', version: '0.9.1.2'
+  compile "org.springframework.boot:spring-boot-configuration-processor"
+  compile 'org.liquibase:liquibase-core:3.5.3'
+  compile group: 'commons-lang', name: 'commons-lang', version: '2.6'
+  compile group: 'org.jadira.usertype', name: 'usertype.core', version: '5.0.0.GA'
+
+  // to map Entities with JodaTime to JSON
+  compile group: 'com.fasterxml.jackson.jaxrs', name: 'jackson-jaxrs-json-provider', version: '2.8.8'
+  compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-joda'
+
+  runtime('com.h2database:h2:1.4.195')
+  runtime('mysql:mysql-connector-java:5.1.6')
+//  providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
+
+  testCompile group: 'junit', name: 'junit', version: '4.12'
+  testCompile('org.springframework.boot:spring-boot-starter-test')
+  testCompile('org.springframework.restdocs:spring-restdocs-mockmvc')
+  testCompile("org.assertj:assertj-core:3.8.0")
+
+  integrationTestCompile('org.springframework.boot:spring-boot-starter-test')
+  integrationTestCompile("org.assertj:assertj-core:3.8.0")
+
+}
+
+
+jar {
+  baseName = 'myapp'
+  version = '0.0.1'
+  from(sourceSets.getByName('integrationTest').output)
+}
+
+task integrationTest(type: Test, group: LifecycleBasePlugin.VERIFICATION_GROUP) {
+  mustRunAfter test
+  testClassesDir = sourceSets.getByName('integrationTest').output.classesDir
+  classpath = sourceSets.getByName('integrationTest').runtimeClasspath
+
+  reports.html.destination = new File(project.buildDir, "reports/tests/integration")
+  reports.junitXml.destination = new File(project.buildDir, "test-results/integration")
+
+  systemProperties['user.dir'] = project.projectDir.toString()
+  systemProperties['user.timezone'] = 'UTC'
+  outputs.upToDateWhen { false }
+  jvmArgs('-XX:MaxPermSize=128m')
+  if (System.getProperty('DEBUG', 'false') == 'true') {
+    jvmArgs('-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005')
+  }
+
+  useJUnit {
+    excludeCategories 'com.diyanfilipov.IntegrationTestInMemory'
+  }
+}
+
+task integrationTestInMemory(type: Test, group: LifecycleBasePlugin.VERIFICATION_GROUP) {
+  doFirst {
+    systemProperties['spring.profiles.active'] = 'test'
+  }
+
+  mustRunAfter test
+
+  testClassesDir = sourceSets.getByName('integrationTest').output.classesDir
+  classpath = sourceSets.getByName('integrationTest').runtimeClasspath
+
+  reports.html.destination = new File(project.buildDir, "reports/tests/integration")
+  reports.junitXml.destination = new File(project.buildDir, "test-results/integration")
+
+  systemProperties['user.dir'] = project.projectDir.toString()
+  systemProperties['user.timezone'] = 'UTC'
+  outputs.upToDateWhen { false }
+  jvmArgs('-XX:MaxPermSize=128m')
+  if (System.getProperty('DEBUG', 'false') == 'true') {
+    jvmArgs('-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005')
+  }
+
+  useJUnit {
+    includeCategories 'com.diyanfilipov.IntegrationTestInMemory'
+  }
+}
+
+task runDev(type: BootRunTask) {
+  description = 'Runs this project as a JVM application'
+  doFirst {
+    main = project.mainClassName
+    classpath = sourceSets.main.runtimeClasspath
+    systemProperty 'spring.profiles.active', 'dev'
+    jvmArgs '-XX:MaxPermSize=128m', '-Xverify:none'
+  }
+}
+
+task runInMemory(type: BootRunTask) {
+  description = 'Runs this project as a JVM application with an in-memory DB'
+  doFirst {
+    main = project.mainClassName
+    classpath = sourceSets.main.runtimeClasspath
+    systemProperty 'spring.profiles.active', 'test'
+    jvmArgs '-XX:MaxPermSize=128m', '-Xverify:none'
+  }
+}
+
+
+check.dependsOn integrationTestInMemory
+

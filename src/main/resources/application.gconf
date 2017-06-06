@@ -1,0 +1,37 @@
+server {
+  display-name = "DiyanFilipov app"
+  port = 8888
+  compression {
+    enabled = true
+    mime-types = ""
+    min-response-size = 256
+  }
+
+  servlet {
+    context-path = "diyanfilipov"
+  }
+
+  tomcat {
+
+    access-log-enabled = true
+    basedir = "/Users/diyanfilipov/Desktop"
+    access-log-file-date-format = ".dd-MM-yyyy."
+    access-log-suffix = "diyanfilipov.log"
+
+  }
+}
+
+security {
+  basic {
+    enabled = false
+  }
+}
+
+management {
+  security {
+    enabled = false
+  }
+}
+
+logging.level.org.springframework.web=DEBUG
+logging.level.org.hibernate=ERROR

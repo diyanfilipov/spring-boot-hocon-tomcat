@@ -1,0 +1,62 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+  <changeSet id="DF-create.user.table" author="diyan.filipov">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <tableExists tableName="user"/>
+      </not>
+    </preConditions>
+    <createTable tableName="user">
+      <column name="id" type="char(32)">
+        <constraints primaryKey="true"/>
+      </column>
+      <column name="version" type="bigint">
+        <constraints nullable="false"/>
+      </column>
+      <column name="date_created" type="timestamp" defaultValueDate="CURRENT_TIMESTAMP">
+        <constraints nullable="false"/>
+      </column>
+      <column name="last_updated" type="timestamp">
+        <constraints nullable="true"/>
+      </column>
+      <column name="first_name" type="varchar(191)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="last_name" type="varchar(191)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="email" type="varchar(191)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="login" type="varchar(191)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="password" type="varchar(191)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+    <createIndex tableName="user" unique="true" indexName="unq_idx_email">
+      <column name="email"/>
+    </createIndex>
+    <createIndex tableName="user" unique="true" indexName="unq_idx_login">
+      <column name="login"/>
+    </createIndex>
+
+  </changeSet>
+
+  <changeSet id="DF-test." author="diyan.filipov">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <tableExists tableName="test"/>
+      </not>
+    </preConditions>
+    <createTable tableName="test">
+    <column name="id" type="char(32)">
+      <constraints primaryKey="true"/>
+    </column>
+    </createTable>
+  </changeSet>
+</databaseChangeLog>

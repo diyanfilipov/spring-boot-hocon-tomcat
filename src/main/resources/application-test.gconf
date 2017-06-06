@@ -1,0 +1,16 @@
+spring.h2.console.enabled=true
+spring.h2.console.path=/h2
+
+diyanfilipov {
+  services {
+    db {
+      jpa {
+        type = "H2"
+        driver = "org.h2.Driver"
+        url = "jdbc:h2:mem:testdb;DB_CLOSE_ON_EXIT=FALSE;DATABASE_TO_UPPER=true;LOCK_MODE=3;MODE=MySQL"
+        username = "sa"
+        password = ""
+      }
+    }
+  }
+}

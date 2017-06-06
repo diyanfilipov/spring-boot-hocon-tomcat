@@ -1,0 +1,13 @@
+diyanfilipov {
+  services {
+    db {
+      jpa {
+        type = "MYSQL"
+        driver = "com.mysql.jdbc.Driver"
+        url = "jdbc:mysql://localhost:3306/diyanfilipov?useGmtMillisForDatetimes=true"
+        username = "root"
+        password = ""
+      }
+    }
+  }
+}
