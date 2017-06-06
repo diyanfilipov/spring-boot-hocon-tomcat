@@ -57,10 +57,4 @@ class UserRepoIntegrationTests {
       assert foundUser != null
     }
   }
-
-  @Test
-  void failingTest() {
-
-    assert true == false
-  }
 }
