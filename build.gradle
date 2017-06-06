@@ -204,3 +204,8 @@ install {
 
 check.dependsOn integrationTestInMemory
 
+task wrapper(type: Wrapper) {
+  gradleVersion = '3.5'
+}
+
+
