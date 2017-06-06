@@ -16,14 +16,19 @@ buildscript {
   }
 }
 
+ext {
+  versionSuffix = project.hasProperty('release') ? '' : '-SNAPSHOT'
+}
+
 
 apply plugin: 'groovy'
 apply plugin: 'idea'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
+apply plugin: 'maven' //providing install task
 
 group 'com.diyanfilipov'
-version '0.0.1'
+version '0.0.2' + (project.versionSuffix as String)
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -181,6 +186,18 @@ task runInMemory(type: BootRunTask) {
     classpath = sourceSets.main.runtimeClasspath
     systemProperty 'spring.profiles.active', 'test'
     jvmArgs '-XX:MaxPermSize=128m', '-Xverify:none'
+  }
+}
+
+install {
+  description = 'Installs the artefact in the local Maven repo'
+  doLast {
+    def pom = (install.repositories
+      .findByName(MavenRepositoryHandlerConvention.DEFAULT_MAVEN_INSTALLER_NAME) as GroovyMavenDeployer)?.pom
+
+    if (pom) {
+      logger.lifecycle("Installed ${pom.groupId}:${pom.artifactId}:${pom.version}")
+    }
   }
 }
 
