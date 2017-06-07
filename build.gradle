@@ -33,7 +33,7 @@ apply plugin: 'maven' //providing install task
 apply plugin: 'maven-publish'
 
 group 'com.diyanfilipov'
-version '0.0.4' + (project.versionSuffix as String)
+version '0.0.5' + (project.versionSuffix as String)
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
